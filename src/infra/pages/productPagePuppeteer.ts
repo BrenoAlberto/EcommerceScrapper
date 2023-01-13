@@ -1,6 +1,6 @@
-import { Page } from 'puppeteer'
-import { IProductPage } from '@models/IProductPage'
-import { ProductData, ProductVariableDetail } from '@models/IProduct'
+import { Browser, Page } from 'puppeteer'
+import { IProductPage } from '@domain/models/IProductPage'
+import { ProductData, ProductVariableDetail } from '@domain/models/IProduct'
 
 export class ProductPagePuppeteer implements IProductPage {
   elementsXPathSelectors = {
@@ -14,22 +14,26 @@ export class ProductPagePuppeteer implements IProductPage {
     reviewStars: '//div[@class="ratings"]//span[contains(@class, "glyphicon-star")]'
   }
 
-  constructor (private readonly page: Page) { }
+  constructor (private readonly browser: Browser) { }
 
-  public async getProductData (): Promise<ProductData> {
+  public async getProductData (productURI: string): Promise<ProductData> {
+    const page = await this.browser.newPage()
+    await page.goto(productURI)
+
     const [
       title,
       description,
       reviewCount,
       reviewScore
     ] = await Promise.all([
-      this.getTitle(),
-      this.getDescription(),
-      this.getReviewCount(),
-      this.getReviewScore()
+      this.getTitle(page),
+      this.getDescription(page),
+      this.getReviewCount(page),
+      this.getReviewScore(page)
     ])
-    const variableDetails = await this.getVariableDetails()
-    return {
+    const variableDetails = await this.getVariableDetails(page)
+    const response = {
+      uri: productURI,
       title,
       description,
       review: {
@@ -38,21 +42,24 @@ export class ProductPagePuppeteer implements IProductPage {
       },
       variableDetails
     }
+
+    await page.close()
+    return response
   }
 
-  private async getVariableDetails (): Promise<ProductVariableDetail[]> {
+  private async getVariableDetails (page: Page): Promise<ProductVariableDetail[]> {
     const [
       availableOptions,
       unavailableOptions
     ] = await Promise.all([
-      this.getMemoryAvailableOptions(),
-      this.getMemoryUnavailableOptions()
+      this.getMemoryAvailableOptions(page),
+      this.getMemoryUnavailableOptions(page)
     ])
 
     const variableDetails: ProductVariableDetail[] = []
 
     for (const memory of availableOptions) {
-      const price = await this.getVariableMemoryPrice(memory)
+      const price = await this.getVariableMemoryPrice(page, memory)
       variableDetails.push({
         memory,
         price,
@@ -61,7 +68,7 @@ export class ProductPagePuppeteer implements IProductPage {
     }
 
     for (const memory of unavailableOptions) {
-      const price = await this.getVariableMemoryPrice(memory)
+      const price = await this.getVariableMemoryPrice(page, memory)
       variableDetails.push({
         memory,
         price,
@@ -72,30 +79,30 @@ export class ProductPagePuppeteer implements IProductPage {
     return variableDetails
   }
 
-  private async getVariableMemoryPrice (memory: number): Promise<number> {
-    await this.setMemoryOption(memory)
-    return await this.getPrice()
+  private async getVariableMemoryPrice (page: Page, memory: number): Promise<number> {
+    await this.setMemoryOption(page, memory)
+    return await this.getPrice(page)
   }
 
-  private async getTitle (): Promise<string> {
-    const titleElement = await this.page.$x(this.elementsXPathSelectors.title)
+  private async getTitle (page: Page): Promise<string> {
+    const titleElement = await page.$x(this.elementsXPathSelectors.title)
     return titleElement[0].evaluate(element => element.textContent)
   }
 
-  private async getPrice (): Promise<number> {
-    const priceElement = await this.page.$x(this.elementsXPathSelectors.price)
+  private async getPrice (page: Page): Promise<number> {
+    const priceElement = await page.$x(this.elementsXPathSelectors.price)
     const priceText = await priceElement[0].evaluate(element => element.textContent)
     return parseFloat(priceText.replace('$', '').replace(',', '.'))
   }
 
-  private async getDescription (): Promise<string> {
-    const descriptionElement = await this.page.$x(this.elementsXPathSelectors.description)
+  private async getDescription (page: Page): Promise<string> {
+    const descriptionElement = await page.$x(this.elementsXPathSelectors.description)
     const descriptionDirty = await descriptionElement[0].evaluate(element => element.textContent)
     return descriptionDirty.replace(/\s+/g, ' ').trim()
   }
 
-  private async setMemoryOption (memoryOption: number): Promise<void> {
-    const memoryOptions = await this.page.$x(this.elementsXPathSelectors.memoryOptions)
+  private async setMemoryOption (page: Page, memoryOption: number): Promise<void> {
+    const memoryOptions = await page.$x(this.elementsXPathSelectors.memoryOptions)
     for (const element of memoryOptions) {
       const memoryOptionText = await element.evaluate(element => element.textContent)
       if (memoryOptionText.includes(memoryOption.toString())) {
@@ -105,8 +112,8 @@ export class ProductPagePuppeteer implements IProductPage {
     }
   }
 
-  private async getMemoryAvailableOptions (): Promise<number[]> {
-    const memoryAvailableOptionsElements = await this.page.$x(this.elementsXPathSelectors.memoryAvailableOptions)
+  private async getMemoryAvailableOptions (page: Page): Promise<number[]> {
+    const memoryAvailableOptionsElements = await page.$x(this.elementsXPathSelectors.memoryAvailableOptions)
     const memoryAvailableOptions: number[] = []
     for (const element of memoryAvailableOptionsElements) {
       const memoryOption = await element.evaluate(element => element.textContent)
@@ -115,8 +122,8 @@ export class ProductPagePuppeteer implements IProductPage {
     return memoryAvailableOptions
   }
 
-  private async getMemoryUnavailableOptions (): Promise<number[]> {
-    const memoryUnavailableOptionsElements = await this.page.$x(this.elementsXPathSelectors.memoryUnavailableOptions)
+  private async getMemoryUnavailableOptions (page: Page): Promise<number[]> {
+    const memoryUnavailableOptionsElements = await page.$x(this.elementsXPathSelectors.memoryUnavailableOptions)
     const memoryUnavailableOptions: number[] = []
     for (const element of memoryUnavailableOptionsElements) {
       const memoryOption = await element.evaluate(element => element.textContent)
@@ -125,14 +132,14 @@ export class ProductPagePuppeteer implements IProductPage {
     return memoryUnavailableOptions
   }
 
-  private async getReviewCount (): Promise<number> {
-    const reviewScoreElement = await this.page.$x(this.elementsXPathSelectors.reviewScore)
+  private async getReviewCount (page: Page): Promise<number> {
+    const reviewScoreElement = await page.$x(this.elementsXPathSelectors.reviewScore)
     const reviewScoreText = await reviewScoreElement[0].evaluate(element => element.textContent)
     return parseFloat(reviewScoreText.replace(',', '.'))
   }
 
-  private async getReviewScore (): Promise<number> {
-    const reviewStarsElements = await this.page.$x(this.elementsXPathSelectors.reviewStars)
+  private async getReviewScore (page: Page): Promise<number> {
+    const reviewStarsElements = await page.$x(this.elementsXPathSelectors.reviewStars)
     return reviewStarsElements.length
   }
 }

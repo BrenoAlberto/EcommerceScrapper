@@ -1,13 +1,8 @@
+import { getBrowser } from '@infra/browser/puppeteerClient'
 import { ProductPagePuppeteer } from '@infra/pages/productPagePuppeteer'
 import { closeBrowser } from '@tests/mocks/browser/puppeteerClient'
-import { mockProductPage } from '@tests/mocks/pages/mockProductPage'
-import { Page } from 'puppeteer'
 
-let productPageMock: Page
-
-beforeEach(async () => {
-  productPageMock = await mockProductPage()
-})
+const productURI = 'https://webscraper.io/test-sites/e-commerce/allinone/product/545'
 
 afterAll(async () => {
   await closeBrowser()
@@ -15,9 +10,10 @@ afterAll(async () => {
 
 describe('Product Page', () => {
   test('Should get the product data correctly', async () => {
-    const productPage = new ProductPagePuppeteer(productPageMock)
-    const productData = await productPage.getProductData()
+    const productPage = new ProductPagePuppeteer(await getBrowser())
+    const productData = await productPage.getProductData(productURI)
     expect(productData).toEqual({
+      uri: productURI,
       title: 'Asus VivoBook X441NA-GA190',
       description: 'Asus VivoBook X441NA-GA190 Chocolate Black, 14", Celeron N3450, 4GB, 128GB SSD, Endless OS, ENG kbd',
       review: {

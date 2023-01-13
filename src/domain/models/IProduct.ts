@@ -5,6 +5,7 @@ export interface ProductVariableDetail {
 }
 
 export interface ProductData {
+  uri: string
   title: string
   description: string
   review: {

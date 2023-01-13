@@ -17,7 +17,8 @@
     "paths": {
       "@tests/*": ["./tests/*"],
       "@infra/*": ["./src/infra/*"],
-      "@models/*": ["./src/models/*"],
+      "@domain/*": ["./src/domain/*"],
+      "@main/*": ["./src/main/*"],
     }
   },
   "exclude": ["node_modules"]
