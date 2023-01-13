@@ -7,13 +7,17 @@
     "moduleResolution": "node",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "outDir": "lib",
     "sourceMap": true,
     "target": "ES2021",
     "resolveJsonModule": true,
     "types": ["node", "jest"],
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "paths": {
+      "@tests/*": ["./tests/*"],
+      "@infra/*": ["./src/infra/*"],
+    }
   },
   "exclude": ["node_modules"]
 }
