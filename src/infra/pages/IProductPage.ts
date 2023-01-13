@@ -8,6 +8,7 @@ export interface ProductData {
   variableDetails: Array<{
     memory: number
     price: number
+    available: boolean
   }>
 }
 
