@@ -1,7 +1,8 @@
 import { Page } from 'puppeteer'
-import { IProductPage, ProductData } from './IProductPage'
+import { IProductPage } from '@models/IProductPage'
+import { ProductData, ProductVariableDetail } from '@models/IProduct'
 
-export class ProductPage implements IProductPage {
+export class ProductPagePuppeteer implements IProductPage {
   elementsXPathSelectors = {
     title: '//div[@class="caption"]/h4[2]',
     price: '//div[@class="caption"]/h4[1]',
@@ -39,11 +40,7 @@ export class ProductPage implements IProductPage {
     }
   }
 
-  private async getVariableDetails (): Promise<Array<{
-    memory: number
-    price: number
-    available: boolean
-  }>> {
+  private async getVariableDetails (): Promise<ProductVariableDetail[]> {
     const [
       availableOptions,
       unavailableOptions
@@ -52,11 +49,7 @@ export class ProductPage implements IProductPage {
       this.getMemoryUnavailableOptions()
     ])
 
-    const variableDetails: Array<{
-      memory: number
-      price: number
-      available: boolean
-    }> = []
+    const variableDetails: ProductVariableDetail[] = []
 
     for (const memory of availableOptions) {
       const price = await this.getVariableMemoryPrice(memory)

@@ -10,6 +10,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@tests/(.*)$': '<rootDir>/tests/$1',
-    '^@infra/(.*)$': '<rootDir>/src/infra/$1'
+    '^@infra/(.*)$': '<rootDir>/src/infra/$1',
+    '^@models/(.*)$': '<rootDir>/src/models/$1'
   }
 }

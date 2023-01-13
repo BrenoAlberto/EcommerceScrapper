@@ -1,4 +1,4 @@
-import { ProductPage } from '@infra/pages/productPage'
+import { ProductPagePuppeteer } from '@infra/pages/productPagePuppeteer'
 import { closeBrowser } from '@tests/mocks/browser/puppeteerClient'
 import { mockProductPage } from '@tests/mocks/pages/mockProductPage'
 import { Page } from 'puppeteer'
@@ -15,7 +15,7 @@ afterAll(async () => {
 
 describe('Product Page', () => {
   test('Should get the product data correctly', async () => {
-    const productPage = new ProductPage(productPageMock)
+    const productPage = new ProductPagePuppeteer(productPageMock)
     const productData = await productPage.getProductData()
     expect(productData).toEqual({
       title: 'Asus VivoBook X441NA-GA190',
