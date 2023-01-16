@@ -2,7 +2,6 @@
   "name": "ecommercescrapper",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
@@ -33,6 +32,6 @@
     "playwright": "^1.29.2"
   },
   "_moduleAliases": {
-    "@": "lib"
+    "@": "dist"
   }
 }
