@@ -1,5 +1,5 @@
 import { Browser, Page } from 'puppeteer'
-import { IProductPage } from '@/domain/protocols/IProductPage'
+import { IProductPage } from '@/domain/protocols/page'
 import { Laptop } from '@/domain/models/laptop'
 
 export class ProductPagePuppeteer implements IProductPage {

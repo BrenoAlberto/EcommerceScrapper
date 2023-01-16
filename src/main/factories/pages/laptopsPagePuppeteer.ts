@@ -1,4 +1,4 @@
-import { ILaptopListPage } from '@/domain/protocols/ILaptopListPage'
+import { ILaptopListPage } from '@/domain/protocols/page'
 import { getBrowser } from '@/infra/browser/puppeteerClient'
 import { LaptopListPagePuppeteer } from '@/infra/pages/laptopsPagePuppeteer'
 

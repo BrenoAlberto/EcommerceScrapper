@@ -1,6 +1,5 @@
-import { ILaptopListPage } from '@/domain/protocols/ILaptopListPage'
+import { ILaptopListPage, IProductPage } from '@/domain/protocols/page'
 import { Laptop } from '@/domain/models/laptop'
-import { IProductPage } from '@/domain/protocols/IProductPage'
 
 type DistinctLaptop = {
   title: string

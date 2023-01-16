@@ -1,4 +1,4 @@
-import { ILaptopListPage } from '@/domain/protocols/ILaptopListPage'
+import { ILaptopListPage } from '@/domain/protocols/page'
 import { Browser } from 'puppeteer'
 
 export class LaptopListPagePuppeteer implements ILaptopListPage {
