@@ -1,12 +1,17 @@
 import { GetSortedLenovoLaptops } from '@/domain/usecases/getSortedLenovoLaptops'
-import { makeLaptopListPage } from '../pages/laptopListPage'
-import { makeProductPage } from '../pages/productPage'
+import {
+  makeGetLaptopsData,
+  makeGetLaptopsURIs,
+  makeSortLaptopsByPrice
+} from '@/main/factories/usecases'
 
 export const makeGetSortedLenovoLaptops = async (driver: 'puppeteer' | 'playwright'): Promise<GetSortedLenovoLaptops> => {
-  const laptopsPage = await makeLaptopListPage(driver)
-  const productPage = await makeProductPage(driver)
+  const getLaptopsURIsUsecase = await makeGetLaptopsURIs(driver)
+  const getLaptopsDataUsecase = await makeGetLaptopsData(driver)
+  const sortLaptopsByPriceUsecase = await makeSortLaptopsByPrice()
   return new GetSortedLenovoLaptops(
-    laptopsPage,
-    productPage
+    getLaptopsURIsUsecase,
+    getLaptopsDataUsecase,
+    sortLaptopsByPriceUsecase
   )
 }

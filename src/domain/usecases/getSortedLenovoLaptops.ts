@@ -1,54 +1,18 @@
-import { ILaptopListPage, IProductPage } from '@/domain/protocols/page'
 import { Laptop } from '@/domain/models/laptop'
-
-type DistinctLaptop = {
-  title: string
-  description: string
-  uri: string
-  review: {
-    score: number
-    count: number
-  }
-  memory: number
-  price: number
-  available: boolean
-}
+import { SortLaptopsByPrice } from './sortLaptopsByPrice'
+import { GetLaptopsData } from './getLaptopsData'
+import { GetLaptopsURIs } from './getLaptopURIs'
 
 export class GetSortedLenovoLaptops {
   constructor (
-    private readonly laptopsPage: ILaptopListPage,
-    private readonly productPage: IProductPage
+    private readonly getLaptopsURIs: GetLaptopsURIs,
+    private readonly getLaptopsData: GetLaptopsData,
+    private readonly sortLaptopsByPrice: SortLaptopsByPrice
   ) {}
 
   async execute (): Promise<Laptop.ModelDetailed[]> {
-    const laptopsURIs = await this.laptopsPage.getLaptopURIs('https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops', 'Lenovo')
-    const concurrency = 20
-    const laptopsData: Laptop.Model[] = []
-    for (let i = 0; i < laptopsURIs.length; i += concurrency) {
-      const laptopsURIsChunk = laptopsURIs.slice(i, i + concurrency)
-      const laptopsDataChunk = await Promise.all(
-        laptopsURIsChunk.map(async uri => {
-          return this.productPage.getLaptopData(uri)
-        })
-      )
-      laptopsData.push(...laptopsDataChunk)
-    }
-
-    const distinctLaptops: DistinctLaptop[] = []
-    for (const laptop of laptopsData) {
-      for (const variableDetail of laptop.variableDetails) {
-        distinctLaptops.push({
-          title: laptop.title,
-          description: laptop.description,
-          uri: laptop.uri,
-          review: laptop.review,
-          memory: variableDetail.memory,
-          price: variableDetail.price,
-          available: variableDetail.available
-        })
-      }
-    }
-
-    return distinctLaptops.sort((a, b) => a.price - b.price)
+    const laptopsURIs = await this.getLaptopsURIs.execute('https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops', 'Lenovo')
+    const laptopsData = await this.getLaptopsData.execute(laptopsURIs)
+    return this.sortLaptopsByPrice.execute(laptopsData)
   }
 }
