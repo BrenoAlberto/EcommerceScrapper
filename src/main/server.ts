@@ -21,7 +21,7 @@ function shutDown (): void {
     process.exit(1)
   }, 10000)
 
-  puppeteerBrowser.close()
-  playwrightBrowser.close()
+  puppeteerBrowser.close().catch(console.error)
+  playwrightBrowser.close().catch(console.error)
   process.exit(0)
 }
