@@ -14,11 +14,11 @@
     "resolveJsonModule": true,
     "types": ["node", "jest"],
     "experimentalDecorators": true,
+    "rootDirs": ["src", "tests"],
+    "baseUrl": "src",
     "paths": {
-      "@tests/*": ["./tests/*"],
-      "@infra/*": ["./src/infra/*"],
-      "@domain/*": ["./src/domain/*"],
-      "@main/*": ["./src/main/*"],
+      "@/tests/*": ["../tests/*"],
+      "@/*": ["*"]
     }
   },
   "exclude": ["node_modules"]

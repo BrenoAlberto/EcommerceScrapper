@@ -1,6 +1,6 @@
-import { ILaptopsPage } from '@domain/models/ILaptopsPage'
-import { ProductData } from '@domain/models/IProduct'
-import { IProductPage } from '@domain/models/IProductPage'
+import { ILaptopsPage } from '@/domain/models/ILaptopsPage'
+import { ProductData } from '@/domain/models/IProduct'
+import { IProductPage } from '@/domain/models/IProductPage'
 
 type DistinctLaptop = {
   title: string

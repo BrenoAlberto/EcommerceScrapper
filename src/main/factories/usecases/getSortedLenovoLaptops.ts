@@ -1,4 +1,4 @@
-import { GetSortedLenovoLaptops } from '@domain/usecases/getSortedLenovoLaptops'
+import { GetSortedLenovoLaptops } from '@/domain/usecases/getSortedLenovoLaptops'
 import { makeLaptopsPagePuppeteer } from '../pages/laptopsPagePuppeteer'
 import { makeProductPagePuppeteer } from '../pages/productPagePuppeteer'
 

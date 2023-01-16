@@ -1,6 +1,6 @@
 import { Browser, Page } from 'puppeteer'
-import { IProductPage } from '@domain/models/IProductPage'
-import { ProductData, ProductVariableDetail } from '@domain/models/IProduct'
+import { IProductPage } from '@/domain/models/IProductPage'
+import { ProductData, ProductVariableDetail } from '@/domain/models/IProduct'
 
 export class ProductPagePuppeteer implements IProductPage {
   elementsXPathSelectors = {
