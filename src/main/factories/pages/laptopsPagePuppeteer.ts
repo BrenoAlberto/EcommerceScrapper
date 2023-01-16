@@ -1,7 +1,7 @@
-import { ILaptopsPage } from '@/domain/models/ILaptopsPage'
+import { ILaptopListPage } from '@/domain/protocols/ILaptopListPage'
 import { getBrowser } from '@/infra/browser/puppeteerClient'
-import { LaptopsPagePuppeteer } from '@/infra/pages/laptopsPagePuppeteer'
+import { LaptopListPagePuppeteer } from '@/infra/pages/laptopsPagePuppeteer'
 
-export const makeLaptopsPagePuppeteer = async (): Promise<ILaptopsPage> => {
-  return new LaptopsPagePuppeteer(await getBrowser())
+export const makeLaptopListPagePuppeteer = async (): Promise<ILaptopListPage> => {
+  return new LaptopListPagePuppeteer(await getBrowser())
 }

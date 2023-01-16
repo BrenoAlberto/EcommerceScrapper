@@ -1,8 +1,8 @@
-import { ILaptopsPage } from '@/domain/models/ILaptopsPage'
+import { ILaptopListPage } from '@/domain/protocols/ILaptopListPage'
 import { Browser } from 'puppeteer'
 
-export class LaptopsPagePuppeteer implements ILaptopsPage {
-  elementsXPathSelectors = {
+export class LaptopListPagePuppeteer implements ILaptopListPage {
+  private readonly elementsXPathSelectors = {
     productsContainers: '//div[contains(@class, "thumbnail")]',
     productTitle: '//div[@class="caption"]//a[@class="title"]'
   }
@@ -19,9 +19,10 @@ export class LaptopsPagePuppeteer implements ILaptopsPage {
     for (const productContainer of productsContainers) {
       const title = await productContainer.$x(this.elementsXPathSelectors.productTitle)
       const titleText = await page.evaluate(element => element.textContent, title[0])
-      if (titleFilter && !titleText.includes(titleFilter)) {
+      if (titleFilter && !titleText?.includes(titleFilter)) {
         continue
       }
+      // @ts-expect-error
       const uri = await page.evaluate(element => element.href, title[0])
       laptopsURIs.push(uri)
     }

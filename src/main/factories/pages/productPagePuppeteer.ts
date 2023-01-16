@@ -1,4 +1,4 @@
-import { IProductPage } from '@/domain/models/IProductPage'
+import { IProductPage } from '@/domain/protocols/IProductPage'
 import { getBrowser } from '@/infra/browser/puppeteerClient'
 import { ProductPagePuppeteer } from '@/infra/pages/productPagePuppeteer'
 

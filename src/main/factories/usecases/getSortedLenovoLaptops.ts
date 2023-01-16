@@ -1,9 +1,9 @@
 import { GetSortedLenovoLaptops } from '@/domain/usecases/getSortedLenovoLaptops'
-import { makeLaptopsPagePuppeteer } from '../pages/laptopsPagePuppeteer'
+import { makeLaptopListPagePuppeteer } from '../pages/laptopsPagePuppeteer'
 import { makeProductPagePuppeteer } from '../pages/productPagePuppeteer'
 
 export const makeGetSortedLenovoLaptops = async (): Promise<GetSortedLenovoLaptops> => {
-  const laptopsPage = await makeLaptopsPagePuppeteer()
+  const laptopsPage = await makeLaptopListPagePuppeteer()
   const productPage = await makeProductPagePuppeteer()
   return new GetSortedLenovoLaptops(
     laptopsPage,

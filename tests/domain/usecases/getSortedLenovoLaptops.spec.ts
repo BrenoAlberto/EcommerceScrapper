@@ -1,5 +1,5 @@
-import { makeGetSortedLenovoLaptops } from '@main/factories/usecases/getSortedLenovoLaptops'
-import { closeBrowser } from '@tests/mocks/browser/puppeteerClient'
+import { makeGetSortedLenovoLaptops } from '@/main/factories/usecases/getSortedLenovoLaptops'
+import { closeBrowser } from '@/tests/mocks/browser/puppeteerClient'
 
 afterAll(async () => {
   await closeBrowser()

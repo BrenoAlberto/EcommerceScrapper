@@ -1,6 +1,6 @@
-import { getBrowser } from '@infra/browser/puppeteerClient'
-import { ProductPagePuppeteer } from '@infra/pages/productPagePuppeteer'
-import { closeBrowser } from '@tests/mocks/browser/puppeteerClient'
+import { getBrowser } from '@/infra/browser/puppeteerClient'
+import { ProductPagePuppeteer } from '@/infra/pages/productPagePuppeteer'
+import { closeBrowser } from '@/tests/mocks/browser/puppeteerClient'
 
 const productURI = 'https://webscraper.io/test-sites/e-commerce/allinone/product/545'
 
@@ -11,7 +11,7 @@ afterAll(async () => {
 describe('Product Page', () => {
   test('Should get the product data correctly', async () => {
     const productPage = new ProductPagePuppeteer(await getBrowser())
-    const productData = await productPage.getProductData(productURI)
+    const productData = await productPage.getLaptopData(productURI)
     expect(productData).toEqual({
       uri: productURI,
       title: 'Asus VivoBook X441NA-GA190',
