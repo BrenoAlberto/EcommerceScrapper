@@ -1,4 +1,5 @@
 import { IBrowser } from '@/domain/protocols/browser'
+import { playwrightBrowser } from '@/infra/browser/playwright'
 import { puppeteerBrowser } from '@/infra/browser/puppeteer'
 
 export const makeBrowser = async (
@@ -9,7 +10,7 @@ export const makeBrowser = async (
   if (driver === 'puppeteer') {
     browser = puppeteerBrowser
   } else if (driver === 'playwright') {
-    throw new Error('Playwright not implemented yet')
+    browser = playwrightBrowser
   } else {
     throw new Error('Invalid driver')
   }
