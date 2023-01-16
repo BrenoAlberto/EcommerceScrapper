@@ -1,8 +1,8 @@
-import { Browser, Page } from 'puppeteer'
-import { IProductPage } from '@/domain/protocols/page'
 import { Laptop } from '@/domain/models/laptop'
+import { IBrowser, IPage } from '@/domain/protocols/browser'
+import { IProductPage } from '@/domain/protocols/page'
 
-export class ProductPagePuppeteer implements IProductPage {
+export class ProductPage implements IProductPage {
   private readonly elementsXPathSelectors = {
     title: '//div[@class="caption"]/h4[2]',
     price: '//div[@class="caption"]/h4[1]',
@@ -10,11 +10,11 @@ export class ProductPagePuppeteer implements IProductPage {
     memoryOptions: '//label[text()="HDD:"]/following-sibling::div[@class="swatches"]/button[contains(@class, "btn swatch")]',
     memoryAvailableOptions: '//label[text()="HDD:"]/following-sibling::div[@class="swatches"]/button[contains(@class, "btn swatch") and not(contains(@class, "disabled"))]',
     memoryUnavailableOptions: '//label[text()="HDD:"]/following-sibling::div[@class="swatches"]/button[contains(@class, "btn swatch") and (contains(@class, "disabled"))]',
-    reviewScore: '//div[@class="ratings"]//p/text()',
+    reviewScore: '//div[@class="ratings"]//p',
     reviewStars: '//div[@class="ratings"]//span[contains(@class, "glyphicon-star")]'
   }
 
-  constructor (private readonly browser: Browser) { }
+  constructor (private readonly browser: IBrowser) { }
 
   public async getLaptopData (productURI: string): Promise<Laptop.Model> {
     const page = await this.browser.newPage()
@@ -47,7 +47,7 @@ export class ProductPagePuppeteer implements IProductPage {
     return response
   }
 
-  private async getVariableDetails (page: Page): Promise<Laptop.VariableDetail[]> {
+  private async getVariableDetails (page: IPage): Promise<Laptop.VariableDetail[]> {
     const [
       availableOptions,
       unavailableOptions
@@ -79,75 +79,74 @@ export class ProductPagePuppeteer implements IProductPage {
     return variableDetails
   }
 
-  private async getVariableMemoryPrice (page: Page, memory: number): Promise<number> {
+  private async getVariableMemoryPrice (page: IPage, memory: number): Promise<number> {
     await this.setMemoryOption(page, memory)
     return await this.getPrice(page)
   }
 
-  private async getTitle (page: Page): Promise<string> {
-    const titleElement = await page.$x(this.elementsXPathSelectors.title)
-    const titleText = await titleElement[0].evaluate(element => element.textContent)
-    if (!titleText) throw new Error('Error getting title')
-    return titleText
+  private async getTitle (page: IPage): Promise<string> {
+    const titleElement = await page.getElementByXPath(this.elementsXPathSelectors.title)
+    const title = await titleElement?.getText()
+    if (!title) throw new Error('Error getting title')
+    return title
   }
 
-  private async getPrice (page: Page): Promise<number> {
-    const priceElement = await page.$x(this.elementsXPathSelectors.price)
-    const priceText = await priceElement[0].evaluate(element => element.textContent)
+  private async getPrice (page: IPage): Promise<number> {
+    const priceElement = await page.getElementByXPath(this.elementsXPathSelectors.price)
+    const priceText = await priceElement?.getText()
     if (!priceText) throw new Error('Error getting price')
     return parseFloat(priceText.replace('$', '').replace(',', '.'))
   }
 
-  private async getDescription (page: Page): Promise<string> {
-    const descriptionElement = await page.$x(this.elementsXPathSelectors.description)
-    const descriptionDirty = await descriptionElement[0].evaluate(element => element.textContent)
+  private async getDescription (page: IPage): Promise<string> {
+    const descriptionElement = await page.getElementByXPath(this.elementsXPathSelectors.description)
+    const descriptionDirty = await descriptionElement?.getText()
     if (!descriptionDirty) throw new Error('Error getting description')
     return descriptionDirty.replace(/\s+/g, ' ').trim()
   }
 
-  private async setMemoryOption (page: Page, memoryOption: number): Promise<void> {
-    const memoryOptions = await page.$x(this.elementsXPathSelectors.memoryOptions)
+  private async setMemoryOption (page: IPage, memoryOption: number): Promise<void> {
+    const memoryOptions = await page.getElementsByXPath(this.elementsXPathSelectors.memoryOptions)
     for (const element of memoryOptions) {
-      const memoryOptionText = await element.evaluate(element => element.textContent)
+      const memoryOptionText = await element.getText()
       if (memoryOptionText?.includes(memoryOption.toString())) {
-        // @ts-expect-error
         await element.click()
         break
       }
     }
   }
 
-  private async getMemoryAvailableOptions (page: Page): Promise<number[]> {
-    const memoryAvailableOptionsElements = await page.$x(this.elementsXPathSelectors.memoryAvailableOptions)
+  private async getMemoryAvailableOptions (page: IPage): Promise<number[]> {
+    const memoryAvailableOptionsElements = await page.getElementsByXPath(this.elementsXPathSelectors.memoryAvailableOptions)
     const memoryAvailableOptions: number[] = []
     for (const element of memoryAvailableOptionsElements) {
-      const memoryOption = await element.evaluate(element => element.textContent)
+      const memoryOption = await element.getText()
       if (!memoryOption) throw new Error('Error getting available memory option')
       memoryAvailableOptions.push(parseInt(memoryOption))
     }
     return memoryAvailableOptions
   }
 
-  private async getMemoryUnavailableOptions (page: Page): Promise<number[]> {
-    const memoryUnavailableOptionsElements = await page.$x(this.elementsXPathSelectors.memoryUnavailableOptions)
+  private async getMemoryUnavailableOptions (page: IPage): Promise<number[]> {
+    const memoryUnavailableOptionsElements = await page.getElementsByXPath(this.elementsXPathSelectors.memoryUnavailableOptions)
     const memoryUnavailableOptions: number[] = []
     for (const element of memoryUnavailableOptionsElements) {
-      const memoryOption = await element.evaluate(element => element.textContent)
+      const memoryOption = await element.getText()
       if (!memoryOption) throw new Error('Error getting unavailable memory option')
       memoryUnavailableOptions.push(parseInt(memoryOption))
     }
     return memoryUnavailableOptions
   }
 
-  private async getReviewCount (page: Page): Promise<number> {
-    const reviewScoreElement = await page.$x(this.elementsXPathSelectors.reviewScore)
-    const reviewScoreText = await reviewScoreElement[0].evaluate(element => element.textContent)
+  private async getReviewCount (page: IPage): Promise<number> {
+    const reviewScoreElement = await page.getElementByXPath(this.elementsXPathSelectors.reviewScore)
+    const reviewScoreText = await reviewScoreElement?.getText()
     if (!reviewScoreText) throw new Error('Error getting review count')
     return parseFloat(reviewScoreText.replace(',', '.'))
   }
 
-  private async getReviewScore (page: Page): Promise<number> {
-    const reviewStarsElements = await page.$x(this.elementsXPathSelectors.reviewStars)
+  private async getReviewScore (page: IPage): Promise<number> {
+    const reviewStarsElements = await page.getElementsByXPath(this.elementsXPathSelectors.reviewStars)
     return reviewStarsElements.length
   }
 }

@@ -1,16 +1,15 @@
-import { getBrowser } from '@/infra/browser/puppeteerClient'
-import { ProductPagePuppeteer } from '@/infra/pages/productPagePuppeteer'
-import { closeBrowser } from '@/tests/mocks/browser/puppeteerClient'
+import { makeProductPage } from '@/main/factories/pages/productPage'
+import { puppeteerBrowser } from '@/infra/browser/puppeteer'
 
 const productURI = 'https://webscraper.io/test-sites/e-commerce/allinone/product/545'
 
 afterAll(async () => {
-  await closeBrowser()
+  await puppeteerBrowser.close()
 })
 
 describe('Product Page', () => {
   test('Should get the product data correctly', async () => {
-    const productPage = new ProductPagePuppeteer(await getBrowser())
+    const productPage = await makeProductPage('puppeteer')
     const productData = await productPage.getLaptopData(productURI)
     expect(productData).toEqual({
       uri: productURI,
