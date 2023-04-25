@@ -4,7 +4,9 @@ An e-commerce scraper for fetching and sorting Lenovo laptop data.
 
 ## Table of Contents
 
+- [About](#about)
 - [Prerequisites](#prerequisites)
+- [Quick Two-liner Start](#quick-two-liner-start)
 - [Installation](#installation)
 - [Running Tests](#running-tests)
 - [Starting the Server](#starting-the-server)
@@ -12,9 +14,25 @@ An e-commerce scraper for fetching and sorting Lenovo laptop data.
   - [Using Puppeteer](#using-puppeteer)
   - [Using Playwright](#using-playwright)
 
+## About
+
+  This project was created as a part of a job application process. It is a simple Node.js server that uses Puppeteer and Playwright to scrape data from <https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops> and return a list of Lenovo laptops sorted by price.
+
 ## Prerequisites
 
 - Node.js installed on your machine
+
+## Quick Two-liner Start
+
+In case you want to quickly test the project, you can run the following commands:
+
+```bash
+  npm install && npm run build && npm run start
+```
+
+```bash
+  curl --location --request GET 'http://localhost:5000/api/puppeteer'
+```
 
 ## Installation
 
