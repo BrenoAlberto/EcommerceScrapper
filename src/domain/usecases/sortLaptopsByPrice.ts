@@ -1,7 +1,7 @@
 import { Laptop } from '@/domain/models/laptop'
 
 export class SortLaptopsByPrice {
-  async execute (laptopsData: Laptop.Model[]): Promise<Laptop.ModelDetailed[]> {
+  execute (laptopsData: Laptop.Model[]): Laptop.ModelDetailed[] {
     const distinctLaptops: Laptop.ModelDetailed[] = []
     for (const laptop of laptopsData) {
       for (const variableDetail of laptop.variableDetails) {
